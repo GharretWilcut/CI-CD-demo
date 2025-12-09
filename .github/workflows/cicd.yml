@@ -31,7 +31,7 @@ jobs:
 
       - name: Generate coverage report
         run: |
-          pytest --cov=. --cov-report=xml --cov-report=html
+          pytest --cov=. --cov-report=xml --cov-report=html:coverage_html
 
       - name: Debug coverage directory
         run: ls -R .
@@ -40,5 +40,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./htmlcov
+          publish_dir: ./coverage_html
           publish_branch: gh-pages
