@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with: 
+        with:
           persist-credentials: false
 
       - name: Setup Python
@@ -24,12 +24,16 @@ jobs:
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Run tests + generate coverage report for deployment
+      - name: Generate coverage report
         run: |
           pytest --cov=. --cov-report=xml --cov-report=html
 
-      - name: Deploy htmlcov to GitHub Pages
+      - name: Debug coverage directory
+        run: ls -R .
+
+      - name: Deploy coverage HTML to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./htmlcov
+          publish_branch: gh-pages
