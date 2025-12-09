@@ -1,4 +1,5 @@
 name: CD Pipeline
+
 on:
   push:
     branches: [ main ]
@@ -9,10 +10,11 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -20,26 +22,27 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           pip install -r requirements.txt
           pip install pytest pytest-cov
 
-      - name: Generate coverage HTML
-        run: |
-          pytest --maxfail=1 --disable-warnings -q --cov=. --cov-report=xml --cov-report=html:coverage_html
+      - name: Generate coverage HTML report
+        run: pytest --cov=. --cov-report=html
 
-      - name: Show coverage dir (debug)
-        run: |
-          echo "PWD: $(pwd)"
-          ls -la
-          ls -la coverage_html || true
-          find coverage_html -maxdepth 2 -type f -print || true
-
-      - name: Upload Pages Artifact
-        uses: actions/upload-pages-artifact@v1
+      - name: Upload coverage artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: coverage_html
+          path: ./htmlcov  # upload coverage HTML folder
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
-        uses: actions/deploy-pages@v1
+        id: deployment
+        uses: actions/deploy-pages@v4
