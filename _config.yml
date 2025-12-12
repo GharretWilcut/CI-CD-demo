@@ -1,0 +1,23 @@
+# _config.yml
+title: CI/CD Demo - Coverage Report
+description: Automated test coverage report
+
+# Tell Jekyll to exclude these directories/files from processing
+exclude:
+  - venv/
+  - .venv/
+  - env/
+  - __pycache__/
+  - .pytest_cache/
+  - requirements.txt
+  - "*.py"
+  - "*.pyc"
+  - .coverage
+  - coverage.xml
+  - .git/
+  - .gitignore
+  - README.md
+
+# Only include the coverage report
+include:
+  - htmlcov/
